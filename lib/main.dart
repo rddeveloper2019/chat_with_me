@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     print('📤 Отправка события: test_event_android (counter=$_counter)');
 
     await FirebaseAnalytics.instance.logEvent(
-      name: 'test_event_android',
+      name: 'test_event_ios',
       parameters: {'button_name': 'debug_button', 'value': _counter},
     );
 
