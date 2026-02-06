@@ -1,85 +1,67 @@
+import 'package:chat_with_me/pages/login_page.dart';
+import 'package:chat_with_me/pages/splash_page.dart';
+import 'package:chat_with_me/services/cloud_storage_service.dart';
+import 'package:chat_with_me/services/database_service.dart';
+import 'package:chat_with_me/services/media_service.dart';
+import 'package:chat_with_me/services/navigation_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:get_it/get_it.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
   if (kDebugMode) {
     await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
   }
-  runApp(const MyApp());
+
+  _registerServices();
+
+  runApp(const MainApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+void _registerServices() {
+  GetIt.I.registerSingleton<NavigationService>(NavigationService());
+  GetIt.I.registerSingleton<MediaService>(MediaService());
+  GetIt.I.registerSingleton<CloudStorageService>(CloudStorageService());
+  GetIt.I.registerSingleton<DatabaseService>(DatabaseService());
+}
+
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Chat with Me!',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.orangeAccent)),
-      home: const MyHomePage(title: 'Chat with Me!'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-
-  int _counter = 0;
-
-  Future<void> _incrementCounter() async {
-    setState(() {
-      _counter++;
-    });
-
-    print('📤 Отправка события: test_event_android (counter=$_counter)');
-
-    await FirebaseAnalytics.instance.logEvent(
-      name: 'test_event_ios',
-      parameters: {'button_name': 'debug_button', 'value': _counter},
-    );
-
-    print('✅ Событие отправлено!');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      title: 'Chat With Me!',
+      theme: ThemeData(
+        scaffoldBackgroundColor: const Color.fromRGBO(36, 35, 49, 1),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Color.fromRGBO(30, 29, 37, 1),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color.fromRGBO(36, 35, 49, 1),
+          foregroundColor: Colors.white,
+          centerTitle: true,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      routes: {'/login': (context) => const LoginPage()},
+      navigatorKey: GetIt.I<NavigationService>().navigatorKey,
+      home: Builder(
+        builder: (context) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Future.delayed(const Duration(milliseconds: 2200), () {
+              if (context.mounted) {
+                GetIt.I<NavigationService>().removeAndNavigateToRoute('/login');
+              }
+            });
+          });
+          return const SplashPage();
+        },
       ),
     );
   }
