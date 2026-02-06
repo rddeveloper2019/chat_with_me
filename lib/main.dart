@@ -19,9 +19,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
+      title: 'Chat with Me!',
+      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.orangeAccent)),
+      home: const MyHomePage(title: 'Chat with Me!'),
     );
   }
 }
@@ -45,7 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
 
-    // Логируем в консоль Flutter
     print('📤 Отправка события: test_event_android (counter=$_counter)');
 
     await FirebaseAnalytics.instance.logEvent(
@@ -54,8 +54,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     print('✅ Событие отправлено!');
-
-    // Проверяем статус сбора аналитики
   }
 
   @override
