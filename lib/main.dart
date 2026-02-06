@@ -1,6 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  if (kDebugMode) {
+    await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+  }
   runApp(const MyApp());
 }
 
@@ -27,12 +36,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   int _counter = 0;
 
-  void _incrementCounter() {
+  Future<void> _incrementCounter() async {
     setState(() {
       _counter++;
     });
+
+    // Логируем в консоль Flutter
+    print('📤 Отправка события: test_event_android (counter=$_counter)');
+
+    await FirebaseAnalytics.instance.logEvent(
+      name: 'test_event_android',
+      parameters: {'button_name': 'debug_button', 'value': _counter},
+    );
+
+    print('✅ Событие отправлено!');
+
+    // Проверяем статус сбора аналитики
   }
 
   @override

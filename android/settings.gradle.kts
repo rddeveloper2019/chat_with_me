@@ -1,3 +1,11 @@
+// android/settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 pluginManagement {
     val flutterSdkPath =
         run {
