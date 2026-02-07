@@ -97,8 +97,9 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: 10),
                   AppLink(
-                    onClick: () =>
-                        GetIt.I<NavigationService>().navigateToRoute('/'),
+                    onClick: () => GetIt.I<NavigationService>().navigateToRoute(
+                      '/register',
+                    ),
                     text: 'Need an account?',
                   ),
                 ],

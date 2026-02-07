@@ -1,5 +1,6 @@
 import 'package:chat_with_me/pages/home_page.dart';
 import 'package:chat_with_me/pages/login_page.dart';
+import 'package:chat_with_me/pages/register_page.dart';
 import 'package:chat_with_me/pages/splash_page.dart';
 import 'package:chat_with_me/providers/auth_provider.dart';
 import 'package:chat_with_me/services/cloud_storage_service.dart';
@@ -58,6 +59,7 @@ class MainApp extends StatelessWidget {
         ),
         routes: {
           '/login': (context) => const LoginPage(),
+          '/register': (context) => const RegisterPage(),
           '/home': (context) => const HomePage(),
         },
         navigatorKey: GetIt.I<NavigationService>().navigatorKey,
