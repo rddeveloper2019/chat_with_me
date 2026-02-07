@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ChatUser {
   final String uid;
   final String name;
@@ -40,9 +42,9 @@ class ChatUser {
       name: map['name'] as String,
       email: map['email'] as String,
       imageUrl: map['image'] as String,
-      lastActiveDate: DateTime.fromMillisecondsSinceEpoch(
-        map['last_active'] as int,
-      ),
+      lastActiveDate: (map['last_active'] is Timestamp)
+          ? (map['last_active'] as Timestamp).toDate()
+          : DateTime.fromMillisecondsSinceEpoch(map['last_active'] as int),
     );
   }
 

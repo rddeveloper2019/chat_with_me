@@ -1,3 +1,4 @@
+import 'package:chat_with_me/pages/home_page.dart';
 import 'package:chat_with_me/pages/login_page.dart';
 import 'package:chat_with_me/pages/splash_page.dart';
 import 'package:chat_with_me/providers/auth_provider.dart';
@@ -55,7 +56,10 @@ class MainApp extends StatelessWidget {
             centerTitle: true,
           ),
         ),
-        routes: {'/login': (context) => const LoginPage()},
+        routes: {
+          '/login': (context) => const LoginPage(),
+          '/home': (context) => const HomePage(),
+        },
         navigatorKey: GetIt.I<NavigationService>().navigatorKey,
         home: Builder(
           builder: (context) {

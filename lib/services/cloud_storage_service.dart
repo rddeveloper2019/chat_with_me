@@ -6,6 +6,4 @@ const USERS_COLLECTION = 'users';
 
 class CloudStorageService {
   final FirebaseFirestore _storage = FirebaseFirestore.instance;
-
-  CloudStorageService() {}
 }
