@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 const USERS_COLLECTION = 'users';
 const CHATS_COLLECTION = 'chats';
@@ -19,7 +20,7 @@ class DatabaseService {
         'last_active': DateTime.now().toUtc(),
       });
     } catch (e) {
-      print('updateUserLastSeenTime error :  ${e.toString()}');
+      debugPrint('updateUserLastSeenTime error :  ${e.toString()}');
     }
   }
 
@@ -37,7 +38,7 @@ class DatabaseService {
         'last_active': DateTime.now().toUtc(),
       });
     } catch (e) {
-      print('createUser error :  ${e.toString()}');
+      debugPrint('createUser error :  ${e.toString()}');
     }
   }
 }

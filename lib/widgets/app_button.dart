@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class AppButton extends StatelessWidget {
-  final void Function() onPressed;
+  final void Function()? onPressed;
   final String name;
   double? width;
   double? height;

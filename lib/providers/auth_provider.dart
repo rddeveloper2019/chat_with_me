@@ -14,7 +14,7 @@ class AuthProvider extends ChangeNotifier {
     _auth = FirebaseAuth.instance;
     _navigationService = GetIt.I<NavigationService>();
     _databaseService = GetIt.I<DatabaseService>();
-    // _auth.signOut();
+
     _auth.authStateChanges().listen((User? user) {
       if (user != null) {
         _databaseService.updateUserLastSeenTime(user.uid);
@@ -38,9 +38,17 @@ class AuthProvider extends ChangeNotifier {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
-      print("FirebaseAuthException login:  ${e.toString()}");
+      debugPrint("FirebaseAuthException login:  ${e.toString()}");
     } catch (e) {
-      print("AuthProviderException login:  ${e.toString()}");
+      debugPrint("AuthProviderException login:  ${e.toString()}");
+    }
+  }
+
+  Future<void> logOut() async {
+    try {
+      await _auth.signOut();
+    } catch (e) {
+      debugPrint("AuthProviderException logOut:  ${e.toString()}");
     }
   }
 
@@ -49,38 +57,63 @@ class AuthProvider extends ChangeNotifier {
     required String password,
   }) async {
     try {
-      final UserCredential credential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      final credential = await _auth.createUserWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
+      );
 
       return credential.user?.uid;
     } on FirebaseAuthException catch (e) {
-      print("FirebaseAuthException register:  ${e.toString()}");
+      debugPrint('FirebaseAuthException register: ${e.toString()}');
 
-      print('КОД ОШИБКИ: ${e.code}');
-      print('СООБЩЕНИЕ: ${e.message}');
-      // print('ДОП. ДАННЫЕ: ${e?.additionalData}');
+      if (e.code == 'network-request-failed') {
+        debugPrint(
+          '🌐 Сетевая ошибка: проверьте интернет-соединение и разрешение INTERNET в AndroidManifest.xml',
+        );
+        throw const AuthException(
+          message: 'Нет интернета. Проверьте подключение и повторите попытку.',
+          code: 'no-internet',
+        );
+      }
 
       switch (e.code) {
-        case 'invalid-credential':
-          print('❗ Проверьте SHA-сертификаты в Firebase Console');
-          break;
         case 'email-already-in-use':
-          print('📧 Email уже зарегистрирован');
-          break;
+          throw const AuthException(
+            message: 'Этот email уже зарегистрирован',
+            code: 'email-already-in-use',
+          );
+        case 'invalid-email':
+          throw const AuthException(
+            message: 'Неверный формат email',
+            code: 'invalid-email',
+          );
         case 'weak-password':
-          print('🔒 Слабый пароль (минимум 6 символов)');
-          break;
+          throw const AuthException(
+            message: 'Пароль слишком простой (минимум 6 символов)',
+            code: 'weak-password',
+          );
+        case 'operation-not-allowed':
+          throw const AuthException(
+            message: 'Регистрация по email отключена в настройках Firebase',
+            code: 'operation-not-allowed',
+          );
+        default:
+          throw AuthException(
+            message: e.message ?? 'Неизвестная ошибка аутентификации',
+            code: e.code,
+          );
       }
     } catch (e) {
-      print("AuthProviderException register:  ${e.toString()}");
+      debugPrint('AuthProviderException register: ${e.toString()}');
+      rethrow;
     }
   }
+}
 
-  Future<void> logOut() async {
-    try {
-      await _auth.signOut();
-    } catch (e) {
-      print("AuthProviderException logOut:  ${e.toString()}");
-    }
-  }
+class AuthException implements Exception {
+  final String message;
+  final String code;
+  const AuthException({required this.message, required this.code});
+  @override
+  String toString() => 'AuthException[$code]: $message';
 }

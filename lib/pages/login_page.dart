@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:chat_with_me/providers/auth_provider.dart';
 import 'package:chat_with_me/services/navigation_service.dart';
 import 'package:chat_with_me/widgets/app_button.dart';
@@ -95,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     name: 'Log In',
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 30),
                   AppLink(
                     onClick: () => GetIt.I<NavigationService>().navigateToRoute(
                       '/register',

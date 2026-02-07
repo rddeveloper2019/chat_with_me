@@ -1,21 +1,22 @@
+import 'dart:io';
+
 import 'package:chat_with_me/services/media_service.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 class ProfileImage extends StatelessWidget {
   final String imageUrl;
-  final PlatformFile? image;
+  final File? image;
   final double size;
 
-  final void Function(PlatformFile? value) onSelect;
+  final void Function(File? value) onSelect;
 
   const ProfileImage({
     super.key,
     required this.size,
     required this.image,
     required this.onSelect,
-    this.imageUrl = 'https://picsum.photos/300/300',
+    this.imageUrl = '',
   });
 
   @override
@@ -34,8 +35,8 @@ class ProfileImage extends StatelessWidget {
               borderRadius: BorderRadius.circular(size / 2),
               image: DecorationImage(
                 image: image != null
-                    ? AssetImage(image!.path!)
-                    : NetworkImage(imageUrl),
+                    ? FileImage(image!) // ← ИЗМЕНИТЕ ЭТУ СТРОКУ
+                    : NetworkImage(imageUrl) as ImageProvider,
                 fit: BoxFit.cover,
               ),
               color: Colors.black,

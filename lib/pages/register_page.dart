@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chat_with_me/providers/auth_provider.dart';
 import 'package:chat_with_me/services/cloud_storage_service.dart';
 import 'package:chat_with_me/services/database_service.dart';
@@ -6,7 +8,6 @@ import 'package:chat_with_me/widgets/app_button.dart';
 import 'package:chat_with_me/widgets/app_link.dart';
 import 'package:chat_with_me/widgets/app_text_field.dart';
 import 'package:chat_with_me/widgets/profile_image.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +31,8 @@ class _RegisterPageState extends State<RegisterPage> {
   String? password = '';
   String? confirmPassword = '';
 
-  PlatformFile? profileImage;
+  File? profileImage;
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -43,7 +45,6 @@ class _RegisterPageState extends State<RegisterPage> {
     databaseService = GetIt.I<DatabaseService>();
 
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       appBar: AppBar(automaticallyImplyLeading: false),
       body: SingleChildScrollView(
         child: Container(
@@ -61,7 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ProfileImage(
                 image: profileImage,
                 size: width * 0.40,
-                onSelect: (PlatformFile? value) {
+                onSelect: (File? value) {
                   setState(() {
                     profileImage = value;
                   });
@@ -115,9 +116,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
                     AppButton(
                       onPressed: () async {
+                        if (_isLoading || !mounted) return;
+
                         if (loginFormKey.currentState!.validate() &&
                             profileImage != null) {
                           loginFormKey.currentState?.save();
+                          setState(() => _isLoading = true);
                           try {
                             final uid = await auth
                                 .registerUsingEmailAndPassword(
@@ -125,15 +129,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                   password: password!,
                                 );
                             final imageUrl = await cloudStorageService
-                                .saveUserImageToStorage(
+                                .saveChatImageToStorage(
                                   uid: uid!,
                                   file: profileImage!,
                                 );
                             await databaseService.createUser(
                               uid: uid,
                               name: name!,
-                              imageUrl:
-                                  imageUrl ?? 'https://picsum.photos/300/300',
+                              imageUrl: imageUrl ?? '',
                               email: email!,
                             );
                             await auth.logOut();
@@ -141,15 +144,18 @@ class _RegisterPageState extends State<RegisterPage> {
                               email: email!,
                               password: password!,
                             );
-                            // navigationService.removeAndNavigateToRoute('/home');
                           } catch (e) {
-                            print('(**) => create user:  ${e}');
+                            debugPrint('(**) => create user:  ${e}');
+                          } finally {
+                            if (mounted) {
+                              setState(() => _isLoading = false);
+                            }
                           }
                         }
                       },
                       name: 'Register',
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 30),
                     AppLink(
                       onClick: () => GetIt.I<NavigationService>().goBack(),
                       text: 'Have an account?',
