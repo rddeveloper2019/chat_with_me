@@ -1,4 +1,5 @@
 import 'package:chat_with_me/providers/auth_provider.dart';
+import 'package:chat_with_me/widgets/chat_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,11 +24,20 @@ class _ChatsPageState extends State<ChatsPage> {
       ),
       height: height * 0.98,
       width: width * 0.97,
-      color: Colors.green,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [Text('ok', style: TextStyle(color: Colors.white))],
+        children: [
+          ChatListTile(
+            title: "Hussain Mustafa",
+            subtitle: "hello!",
+            isActive: true,
+            isActivity: true,
+            imageUrl:
+                "https://www.headshotpro.com/avatar-results/random-1.webp",
+            height: height * 0.10,
+          ),
+        ],
       ),
     );
   }
