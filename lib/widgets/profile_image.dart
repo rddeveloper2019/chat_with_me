@@ -24,19 +24,30 @@ class ProfileImage extends StatelessWidget {
       onTap: () {
         GetIt.I<MediaService>().pickImageFromLibrary().then(onSelect);
       },
-      child: Container(
-        height: size,
-        width: size,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(size / 2),
-          image: DecorationImage(
-            image: image != null
-                ? AssetImage(image!.path!)
-                : NetworkImage(imageUrl),
-            fit: BoxFit.cover,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            height: size,
+            width: size,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(size / 2),
+              image: DecorationImage(
+                image: image != null
+                    ? AssetImage(image!.path!)
+                    : NetworkImage(imageUrl),
+                fit: BoxFit.cover,
+              ),
+              color: Colors.black,
+            ),
           ),
-          color: Colors.black,
-        ),
+          if (image == null)
+            Icon(
+              Icons.add_photo_alternate_outlined,
+              color: Color.fromRGBO(255, 255, 255, 0.6),
+              size: size / 1.3,
+            ),
+        ],
       ),
     );
   }

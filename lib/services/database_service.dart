@@ -22,4 +22,22 @@ class DatabaseService {
       print('updateUserLastSeenTime error :  ${e.toString()}');
     }
   }
+
+  Future<void> createUser({
+    required String uid,
+    required String name,
+    required String imageUrl,
+    required String email,
+  }) async {
+    try {
+      await _db.collection(USERS_COLLECTION).doc(uid).set({
+        'email': email,
+        'name': name,
+        'image': imageUrl,
+        'last_active': DateTime.now().toUtc(),
+      });
+    } catch (e) {
+      print('createUser error :  ${e.toString()}');
+    }
+  }
 }
