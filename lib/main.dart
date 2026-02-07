@@ -1,5 +1,6 @@
 import 'package:chat_with_me/pages/login_page.dart';
 import 'package:chat_with_me/pages/splash_page.dart';
+import 'package:chat_with_me/providers/auth_provider.dart';
 import 'package:chat_with_me/services/cloud_storage_service.dart';
 import 'package:chat_with_me/services/database_service.dart';
 import 'package:chat_with_me/services/media_service.dart';
@@ -9,6 +10,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,33 +37,40 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Chat With Me!',
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color.fromRGBO(36, 35, 49, 1),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Color.fromRGBO(30, 29, 37, 1),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Chat With Me!',
+        theme: ThemeData(
+          scaffoldBackgroundColor: const Color.fromRGBO(36, 35, 49, 1),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: Color.fromRGBO(30, 29, 37, 1),
+          ),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color.fromRGBO(36, 35, 49, 1),
+            foregroundColor: Colors.white,
+            centerTitle: true,
+          ),
         ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color.fromRGBO(36, 35, 49, 1),
-          foregroundColor: Colors.white,
-          centerTitle: true,
-        ),
-      ),
-      routes: {'/login': (context) => const LoginPage()},
-      navigatorKey: GetIt.I<NavigationService>().navigatorKey,
-      home: Builder(
-        builder: (context) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Future.delayed(const Duration(milliseconds: 2200), () {
-              if (context.mounted) {
-                GetIt.I<NavigationService>().removeAndNavigateToRoute('/login');
-              }
+        routes: {'/login': (context) => const LoginPage()},
+        navigatorKey: GetIt.I<NavigationService>().navigatorKey,
+        home: Builder(
+          builder: (context) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Future.delayed(const Duration(milliseconds: 2200), () {
+                if (context.mounted) {
+                  GetIt.I<NavigationService>().removeAndNavigateToRoute(
+                    '/login',
+                  );
+                }
+              });
             });
-          });
-          return const SplashPage();
-        },
+            return const SplashPage();
+          },
+        ),
       ),
     );
   }
