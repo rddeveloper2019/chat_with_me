@@ -38,10 +38,10 @@ class ChatUser {
 
   factory ChatUser.fromMap(Map<String, dynamic> map) {
     return ChatUser(
-      uid: map['uid'] as String,
-      name: map['name'] as String,
-      email: map['email'] as String,
-      imageUrl: map['image'] as String,
+      uid: map['uid'] ?? '',
+      name: map['name'] ?? '',
+      email: map['email'] ?? '',
+      imageUrl: map['image'] ?? '',
       lastActiveDate: (map['last_active'] is Timestamp)
           ? (map['last_active'] as Timestamp).toDate()
           : DateTime.fromMillisecondsSinceEpoch(map['last_active'] as int),

@@ -41,4 +41,23 @@ class DatabaseService {
       debugPrint('createUser error :  ${e.toString()}');
     }
   }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getChatsForUser(String uid) {
+    return _db
+        .collection(CHATS_COLLECTION)
+        .where('members', arrayContains: uid)
+        .snapshots();
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getLastMessageForChat(
+    String chatId,
+  ) {
+    return _db
+        .collection(CHATS_COLLECTION)
+        .doc(chatId)
+        .collection(MESSAGES_COLLECTION)
+        .orderBy("sent_time", descending: true)
+        .limit(1)
+        .get();
+  }
 }

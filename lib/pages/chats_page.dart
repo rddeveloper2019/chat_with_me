@@ -1,5 +1,6 @@
+import 'package:chat_with_me/widgets/chats_list.dart';
 import 'package:chat_with_me/providers/auth_provider.dart';
-import 'package:chat_with_me/widgets/chat_list_tile.dart';
+import 'package:chat_with_me/providers/chats_page_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,28 +18,13 @@ class _ChatsPageState extends State<ChatsPage> {
     final height = MediaQuery.of(context).size.height;
     final auth = Provider.of<AuthProvider>(context);
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: width * 0.03,
-        vertical: height * 0.02,
-      ),
-      height: height * 0.98,
-      width: width * 0.97,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ChatListTile(
-            title: "Hussain Mustafa",
-            subtitle: "hello!",
-            isActive: true,
-            isActivity: true,
-            imageUrl:
-                "https://www.headshotpro.com/avatar-results/random-1.webp",
-            height: height * 0.10,
-          ),
-        ],
-      ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ChatsPageProvider>(
+          create: (_) => ChatsPageProvider(auth: auth),
+        ),
+      ],
+      child: ChatsList(width: width, height: height),
     );
   }
 }

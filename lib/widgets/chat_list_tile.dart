@@ -27,7 +27,7 @@ class ChatListTile extends StatelessWidget {
     return ListTile(
       minVerticalPadding: height * 0.20,
       onTap: onTap,
-      leading: CircleAvatarWithStatus(isActive: isActive, imageUrl: imageUrl),
+      leading: CircleAvatarWithStatus(isActive: isActivity, imageUrl: imageUrl),
       title: Text(
         title,
         style: TextStyle(
@@ -36,7 +36,7 @@ class ChatListTile extends StatelessWidget {
           fontSize: 18,
         ),
       ),
-      subtitle: isActivity
+      subtitle: isActive
           ? Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,

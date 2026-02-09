@@ -38,4 +38,9 @@ class Chat {
         ? _recipients.first.imageUrl
         : "https://img.freepik.com/premium-vector/colorful-chat-logo-template-creative-chat-logo-design-vector_639795-2774.jpg";
   }
+
+  @override
+  String toString() {
+    return 'Chat{uid=$uid, currentUserUid=$currentUserUid, isActivity=$isActivity, isGroup=$isGroup, messages=$messages, members=$members, _recipients=$_recipients}';
+  }
 }
