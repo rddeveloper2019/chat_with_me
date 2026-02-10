@@ -19,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   late NavigationService navigationService;
 
   final loginFormKey = GlobalKey<FormState>();
+
   String? email = '';
   String? password = '';
 
@@ -33,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
     final height = MediaQuery.of(context).size.height;
     auth = Provider.of<AuthProvider>(context);
     navigationService = GetIt.I<NavigationService>();
+
     return Scaffold(
       appBar: AppBar(),
       body: Container(

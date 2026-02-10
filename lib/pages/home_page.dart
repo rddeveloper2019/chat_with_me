@@ -1,5 +1,5 @@
 import 'package:chat_with_me/pages/chats_page.dart';
-import 'package:chat_with_me/widgets/top_bar.dart';
+import 'package:chat_with_me/widgets/logout_button.dart';
 import 'package:chat_with_me/widgets/users_page.dart';
 import 'package:flutter/material.dart';
 
@@ -13,14 +13,21 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currentTabIdx = 0;
 
-  List<Widget> tabs = const [ChatsPage(), UsersPage()];
+  List<({String title, Widget widget})> tabs = [
+    (title: 'Chats', widget: ChatsPage()),
+    (title: 'Users', widget: UsersPage()),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size(double.infinity, 50),
-        child: TopBar(index: currentTabIdx),
+      appBar: AppBar(
+        title: Text(
+          tabs[currentTabIdx].title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: false,
+        actions: [LogoutButton()],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentTabIdx,
@@ -42,8 +49,8 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body:
-          tabs[currentTabIdx], //SingleChildScrollView(child: Column(children: [Text('Home Page')])),
+      body: tabs[currentTabIdx]
+          .widget, //SingleChildScrollView(child: Column(children: [Text('Home Page')])),
     );
   }
 }
