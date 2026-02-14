@@ -1,6 +1,9 @@
 import 'package:chat_with_me/models/chat_message.dart';
 import 'package:chat_with_me/models/chat_user.dart';
+import 'package:chat_with_me/widgets/image_message_bubble.dart';
+import 'package:chat_with_me/widgets/text_message_bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class MessagesListTile extends StatelessWidget {
   final ChatMessage message;
@@ -32,23 +35,18 @@ class MessagesListTile extends StatelessWidget {
               backgroundImage: NetworkImage(sender.imageUrl),
               maxRadius: 20,
             ),
-          SizedBox(width: 20),
+          SizedBox(width: width * 0.03),
           message.type == MessageType.text
-              ? Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.grey,
-                    ),
-                    child: Text(
-                      message.content +
-                          'feferfer ferferfer ferferferfer ferferferfer ferferf erferf erferf erferf erfer ferf erf erf er ferf erfer f erf e',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
+              ? TextMessageBubble(
+                  text: message.content,
+                  isOwn: isOwn,
+                  sendDate: timeago.format(message.sentTime, locale: 'ru'),
                 )
-              : Expanded(child: Container(color: Colors.red)),
+              : ImageMessageBubble(
+                  imageUrl: message.content,
+                  isOwn: isOwn,
+                  sendDate: timeago.format(message.sentTime, locale: 'ru'),
+                ),
         ],
       ),
     );

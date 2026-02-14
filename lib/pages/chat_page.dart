@@ -73,8 +73,8 @@ class ChatPageView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Spacer(),
             Expanded(
               child: chatPageProvider.isLoading
                   ? Center(child: const CircularProgressIndicator())
