@@ -30,13 +30,16 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ),
       ],
-      child: ChatView(chat: widget.chat, scrollController: scrollController),
+      child: ChatPageView(
+        chat: widget.chat,
+        scrollController: scrollController,
+      ),
     );
   }
 }
 
-class ChatView extends StatelessWidget {
-  ChatView({required this.chat, required this.scrollController});
+class ChatPageView extends StatelessWidget {
+  ChatPageView({required this.chat, required this.scrollController});
 
   final Chat chat;
   final ScrollController scrollController;

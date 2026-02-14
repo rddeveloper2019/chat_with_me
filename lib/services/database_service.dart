@@ -82,7 +82,7 @@ class DatabaseService {
     }
   }
 
-  Future<void> addMessageChat(
+  Future<void> addMessageToChat(
     String chatId, {
     required ChatMessage message,
   }) async {
