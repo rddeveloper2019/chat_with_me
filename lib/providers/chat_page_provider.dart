@@ -9,18 +9,21 @@ import 'package:chat_with_me/services/media_service.dart';
 import 'package:chat_with_me/services/navigation_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get_it/get_it.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatPageProvider extends ChangeNotifier {
   final DatabaseService db = GetIt.I<DatabaseService>();
   final CloudStorageService storageService = GetIt.I<CloudStorageService>();
   final MediaService mediaService = GetIt.I<MediaService>();
   final NavigationService navigationService = GetIt.I<NavigationService>();
+  final KeyboardVisibilityController keyboardVisibilityController;
 
   final AuthProvider auth;
   final ScrollController messagesViewScrollController;
   final String chatId;
+
+  late StreamSubscription<bool> keyboardSubscription;
 
   List<ChatMessage> messages = [];
 
@@ -44,6 +47,7 @@ class ChatPageProvider extends ChangeNotifier {
     required this.auth,
     required this.messagesViewScrollController,
     required this.chatId,
+    required this.keyboardVisibilityController,
   }) {
     _loadMessages();
 
@@ -62,6 +66,12 @@ class ChatPageProvider extends ChangeNotifier {
       } finally {
         notifyListeners();
       }
+    });
+
+    keyboardSubscription = keyboardVisibilityController.onChange.listen((
+      isOpen,
+    ) {
+      db.updateChatData(chatId, data: {'is_activity': isOpen});
     });
   }
 

@@ -4,6 +4,8 @@ import 'package:chat_with_me/providers/auth_provider.dart';
 import 'package:chat_with_me/providers/chat_page_provider.dart';
 import 'package:chat_with_me/widgets/messages_list_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
@@ -29,6 +31,8 @@ class _ChatPageState extends State<ChatPage> {
             auth: context.read<AuthProvider>(),
             messagesViewScrollController: messagesViewController,
             chatId: widget.chat.uid,
+            keyboardVisibilityController:
+                GetIt.I<KeyboardVisibilityController>(),
           ),
         ),
       ],
