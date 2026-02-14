@@ -74,6 +74,17 @@ class DatabaseService {
         .snapshots();
   }
 
+  Future<QuerySnapshot<Map<String, dynamic>>> getAllChatMessages(
+    String chatId,
+  ) {
+    return _db
+        .collection(CHATS_COLLECTION)
+        .doc(chatId)
+        .collection(MESSAGES_COLLECTION)
+        .orderBy('sent_time', descending: false)
+        .get();
+  }
+
   Future<void> deleteChat(String chatId) async {
     try {
       await _db.collection(CHATS_COLLECTION).doc(chatId).delete();

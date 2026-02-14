@@ -145,7 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               password: password!,
                             );
                           } catch (e) {
-                            debugPrint('(**) => create user:  ${e}');
+                            debugPrint('create user:  ${e}');
                           } finally {
                             if (mounted) {
                               setState(() => _isLoading = false);
