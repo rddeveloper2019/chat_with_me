@@ -1,5 +1,4 @@
 import 'package:chat_with_me/models/chat.dart';
-import 'package:chat_with_me/models/chat_user.dart';
 import 'package:chat_with_me/providers/auth_provider.dart';
 import 'package:chat_with_me/providers/chat_page_provider.dart';
 import 'package:chat_with_me/widgets/messages_list_tile.dart';
@@ -54,6 +53,7 @@ class ChatPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     final chatPageProvider = context.watch<ChatPageProvider>();
     final auth = Provider.of<AuthProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -72,31 +72,35 @@ class ChatPageView extends StatelessWidget {
       ),
       body: SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
               child: chatPageProvider.isLoading
-                  ? Center(child: const CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator())
                   : chatPageProvider.messages.isEmpty
-                  ? const Text(
-                      'Be first to say Hi!',
-                      style: TextStyle(color: Colors.white),
+                  ? const Center(
+                      child: Text(
+                        'Be first to say Hi!',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     )
                   : ListView.builder(
                       controller: scrollController,
-                      padding: const EdgeInsets.all(16),
+                      reverse: true,
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
                       itemCount: chatPageProvider.messages.length,
                       itemBuilder: (context, index) {
                         final message = chatPageProvider.messages[index];
                         final sender = chat.members
                             .where((m) => m.uid == message.senderId)
                             .first;
-
                         final isOwn = message.senderId == auth.chatUser.uid;
 
                         return MessagesListTile(
-                          message: chatPageProvider.messages[index],
+                          message: message,
                           isOwn: isOwn,
                           sender: sender,
                         );
@@ -105,7 +109,7 @@ class ChatPageView extends StatelessWidget {
             ),
 
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               color: const Color(0xFF1A1A1A),
               child: TextField(
                 style: const TextStyle(color: Colors.white),
