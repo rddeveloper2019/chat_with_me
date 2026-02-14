@@ -18,10 +18,7 @@ class MessagesListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Container(
-      width: width * 0.8,
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         mainAxisSize: MainAxisSize.max,
@@ -35,7 +32,7 @@ class MessagesListTile extends StatelessWidget {
               backgroundImage: NetworkImage(sender.imageUrl),
               maxRadius: 20,
             ),
-          SizedBox(width: width * 0.03),
+          SizedBox(width: isOwn ? 55 : 15),
           message.type == MessageType.text
               ? TextMessageBubble(
                   text: message.content,

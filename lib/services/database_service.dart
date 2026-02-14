@@ -94,7 +94,6 @@ class DatabaseService {
   }
 
   Future<void> deleteMessage(String chatId, {required String messageId}) async {
-    print('(**) => messageId:  ${messageId}');
     try {
       await _db
           .collection(CHATS_COLLECTION)
