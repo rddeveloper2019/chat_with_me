@@ -58,7 +58,7 @@ class DatabaseService {
         .collection(CHATS_COLLECTION)
         .doc(chatId)
         .collection(MESSAGES_COLLECTION)
-        .orderBy("sent_time", descending: true)
+        .orderBy("sent_time", descending: false)
         .limit(1)
         .get();
   }
@@ -70,7 +70,7 @@ class DatabaseService {
         .collection(CHATS_COLLECTION)
         .doc(chatId)
         .collection(MESSAGES_COLLECTION)
-        .orderBy('sent_time"', descending: false)
+        .orderBy('sent_time', descending: true)
         .snapshots();
   }
 
@@ -81,7 +81,7 @@ class DatabaseService {
         .collection(CHATS_COLLECTION)
         .doc(chatId)
         .collection(MESSAGES_COLLECTION)
-        .orderBy('sent_time', descending: false)
+        .orderBy('sent_time', descending: true)
         .get();
   }
 
@@ -90,6 +90,20 @@ class DatabaseService {
       await _db.collection(CHATS_COLLECTION).doc(chatId).delete();
     } catch (e) {
       debugPrint('deleteChat error :  ${e.toString()}');
+    }
+  }
+
+  Future<void> deleteMessage(String chatId, {required String messageId}) async {
+    print('(**) => messageId:  ${messageId}');
+    try {
+      await _db
+          .collection(CHATS_COLLECTION)
+          .doc(chatId)
+          .collection(MESSAGES_COLLECTION)
+          .doc(messageId)
+          .delete();
+    } catch (e) {
+      debugPrint('deleteMessage error :  ${e.toString()}');
     }
   }
 

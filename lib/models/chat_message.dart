@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -33,16 +32,18 @@ enum MessageType {
 }
 
 class ChatMessage {
+  String? id;
   final String senderId;
   final MessageType type;
   final String content;
-  final DateTime sentTime;
+  final Timestamp sentTime;
 
   ChatMessage({
     required this.senderId,
     required this.type,
     required this.content,
     required this.sentTime,
+    this.id = '',
   });
 
   @override
@@ -52,10 +53,10 @@ class ChatMessage {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'senderId': senderId,
+      'sender_id': senderId,
       'type': type.toString(),
       'content': content,
-      'sentTime': sentTime.millisecondsSinceEpoch,
+      'sent_time': sentTime,
     };
   }
 
@@ -64,9 +65,8 @@ class ChatMessage {
       senderId: map['sender_id'] as String,
       type: MessageType.fromString(map['type']),
       content: map['content'] as String,
-      sentTime: (map['sent_time'] is Timestamp)
-          ? (map['sent_time'] as Timestamp).toDate()
-          : DateTime.fromMillisecondsSinceEpoch(map['sent_time'] as int),
+      sentTime: map['sent_time'] as Timestamp,
+      id: map['id'] as String?,
     );
   }
 

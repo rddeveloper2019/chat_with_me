@@ -1,11 +1,16 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:chat_with_me/models/chat_message.dart';
 import 'package:chat_with_me/providers/auth_provider.dart';
 import 'package:chat_with_me/services/cloud_storage_service.dart';
 import 'package:chat_with_me/services/database_service.dart';
 import 'package:chat_with_me/services/media_service.dart';
 import 'package:chat_with_me/services/navigation_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatPageProvider extends ChangeNotifier {
   final DatabaseService db = GetIt.I<DatabaseService>();
@@ -17,15 +22,23 @@ class ChatPageProvider extends ChangeNotifier {
   final ScrollController messagesViewScrollController;
   final String chatId;
 
-  List<ChatMessage> messages = []; // ✅ Исправлено: убран final и ?
+  List<ChatMessage> messages = [];
 
   bool _isLoading = true;
   bool _hasError = false;
   String? _errorMessage;
+  String? _message;
 
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
   String? get errorMessage => _errorMessage;
+  String? get message => _message;
+
+  set message(String? value) {
+    _message = value;
+  }
+
+  StreamSubscription? messagesStream;
 
   ChatPageProvider({
     required this.auth,
@@ -33,21 +46,29 @@ class ChatPageProvider extends ChangeNotifier {
     required this.chatId,
   }) {
     _loadMessages();
+
+    messagesStream = db.streamMessagesForChat(chatId).listen((
+      QuerySnapshot<Map<String, dynamic>> snapshot,
+    ) {
+      try {
+        messages.clear();
+        messages.addAll(
+          snapshot.docs.map((data) {
+            return ChatMessage.fromMap({...data.data(), 'id': data.id});
+          }),
+        );
+      } catch (e) {
+        debugPrint('messagesStream listen error :  ${e.toString()}');
+      } finally {
+        notifyListeners();
+      }
+    });
   }
 
   Future<void> _loadMessages() async {
     _isLoading = true;
     _hasError = false;
     _errorMessage = null;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (messagesViewScrollController.hasClients) {
-        messagesViewScrollController.jumpTo(
-          messagesViewScrollController.position.maxScrollExtent,
-        );
-      }
-    });
-    notifyListeners();
 
     try {
       final snapshot = await db.getAllChatMessages(chatId);
@@ -60,7 +81,6 @@ class ChatPageProvider extends ChangeNotifier {
           .map((doc) => ChatMessage.fromMap(doc.data()))
           .toList();
 
-      // Автопрокрутка вниз после загрузки
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (messagesViewScrollController.hasClients) {
           messagesViewScrollController.jumpTo(
@@ -68,6 +88,7 @@ class ChatPageProvider extends ChangeNotifier {
           );
         }
       });
+      print('(**) => messages:  ${messages}');
     } catch (e) {
       _hasError = true;
       _errorMessage = e.toString();
@@ -78,8 +99,65 @@ class ChatPageProvider extends ChangeNotifier {
     }
   }
 
-  // Публичный метод для повторной загрузки при ошибке
   Future<void> retryLoad() => _loadMessages();
 
   void goBack() => navigationService.goBack();
+
+  void deleteChat() {
+    goBack();
+    db.deleteChat(chatId);
+  }
+
+  void sendText() async {
+    if (message != null && message!.isNotEmpty) {
+      db.addMessageToChat(
+        chatId,
+        message: ChatMessage(
+          senderId: auth.chatUser.uid,
+          type: MessageType.text,
+          content: message!,
+          sentTime: Timestamp.now(),
+        ),
+      );
+      message = '';
+      notifyListeners();
+    }
+  }
+
+  void deleteMessage(String messageId) async {
+    await db.deleteMessage(chatId, messageId: messageId);
+  }
+
+  Future<void> sendImage() async {
+    try {
+      final File? image = await mediaService.pickImageFromLibrary();
+      if (image == null) {
+        return;
+      }
+
+      final imageUrl = await storageService.saveChatImageToStorage(
+        uid: auth.chatUser.uid,
+        file: image,
+      );
+
+      db.addMessageToChat(
+        chatId,
+        message: ChatMessage(
+          senderId: auth.chatUser.uid,
+          type: MessageType.image,
+          content: imageUrl ?? '',
+          sentTime: Timestamp.fromDate(DateTime.now()),
+        ),
+      );
+    } catch (e) {
+      debugPrint('sendImage error :  ${e.toString()}');
+    }
+  }
+
+  @override
+  void dispose() {
+    messagesStream?.cancel();
+    messagesViewScrollController.dispose();
+    super.dispose();
+  }
 }

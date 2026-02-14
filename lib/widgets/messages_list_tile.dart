@@ -40,12 +40,20 @@ class MessagesListTile extends StatelessWidget {
               ? TextMessageBubble(
                   text: message.content,
                   isOwn: isOwn,
-                  sendDate: timeago.format(message.sentTime, locale: 'ru'),
+                  sendDate: timeago.format(
+                    message.sentTime.toDate(),
+                    locale: 'ru',
+                  ),
+                  messageId: message.id,
                 )
               : ImageMessageBubble(
                   imageUrl: message.content,
                   isOwn: isOwn,
-                  sendDate: timeago.format(message.sentTime, locale: 'ru'),
+                  sendDate: timeago.format(
+                    message.sentTime.toDate(),
+                    locale: 'ru',
+                  ),
+                  messageId: message.id,
                 ),
         ],
       ),

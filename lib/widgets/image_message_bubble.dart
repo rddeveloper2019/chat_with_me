@@ -1,14 +1,19 @@
+import 'package:chat_with_me/providers/chat_page_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ImageMessageBubble extends StatelessWidget {
   final String imageUrl;
   final bool isOwn;
   final String sendDate;
-  const ImageMessageBubble({
+  String? messageId;
+
+  ImageMessageBubble({
     super.key,
     required this.imageUrl,
     required this.isOwn,
     required this.sendDate,
+    this.messageId,
   });
 
   @override
@@ -58,10 +63,19 @@ class ImageMessageBubble extends StatelessWidget {
                     child: Icon(Icons.edit, size: 15, color: Colors.white54),
                   ),
                   SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Icon(Icons.delete, size: 15, color: Colors.white54),
-                  ),
+                  if (messageId != null)
+                    GestureDetector(
+                      onTap: () {
+                        context.read<ChatPageProvider>().deleteMessage(
+                          messageId!,
+                        );
+                      },
+                      child: Icon(
+                        Icons.delete,
+                        size: 15,
+                        color: Colors.white54,
+                      ),
+                    ),
                 ],
               ],
             ),
