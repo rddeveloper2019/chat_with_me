@@ -1,5 +1,6 @@
 import 'package:chat_with_me/models/chat.dart';
 import 'package:chat_with_me/providers/auth_provider.dart';
+import 'package:chat_with_me/providers/chat_page_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,17 +18,42 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final messagesViewController = ScrollController();
+
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ChatPageProvider>(
+          create: (context) => ChatPageProvider(
+            auth: context.read<AuthProvider>(),
+            messagesViewScrollController: messagesViewController,
+            chatId: widget.chat.uid,
+          ),
+        ),
+      ],
+      child: ChatView(chat: widget.chat, scrollController: scrollController),
+    );
+  }
+}
+
+class ChatView extends StatelessWidget {
+  ChatView({required this.chat, required this.scrollController});
+
+  final Chat chat;
+  final ScrollController scrollController;
+
+  @override
+  Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    final auth = Provider.of<AuthProvider>(context);
+    final pageProvider = context.watch<ChatPageProvider>();
 
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
-            CircleAvatar(backgroundImage: NetworkImage(widget.chat.imageUrl)),
+            CircleAvatar(backgroundImage: NetworkImage(chat.imageUrl)),
             SizedBox(width: 10),
-            Text(widget.chat.title),
+            Text(chat.title),
           ],
         ),
         actions: [
