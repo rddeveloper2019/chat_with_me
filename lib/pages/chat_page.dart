@@ -1,7 +1,8 @@
 import 'package:chat_with_me/models/chat.dart';
-import 'package:chat_with_me/models/chat_message.dart';
+import 'package:chat_with_me/models/chat_user.dart';
 import 'package:chat_with_me/providers/auth_provider.dart';
 import 'package:chat_with_me/providers/chat_page_provider.dart';
+import 'package:chat_with_me/widgets/messages_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -52,7 +53,7 @@ class ChatPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chatPageProvider = context.watch<ChatPageProvider>();
-
+    final auth = Provider.of<AuthProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -71,30 +72,38 @@ class ChatPageView extends StatelessWidget {
       ),
       body: SafeArea(
         child: Column(
+          mainAxisSize: MainAxisSize.max,
           children: [
-            // Список сообщений (прокручиваемый)
+            Spacer(),
             Expanded(
-              child: Center(
-                child: chatPageProvider.isLoading
-                    ? const CircularProgressIndicator()
-                    : chatPageProvider.messages.isEmpty
-                    ? const Text(
-                        'Be first to say Hi!',
-                        style: TextStyle(color: Colors.white),
-                      )
-                    : ListView.builder(
-                        controller: scrollController,
-                        padding: const EdgeInsets.all(16),
-                        itemCount: chatPageProvider.messages.length,
-                        itemBuilder: (context, index) {
-                          return MessagesListTile(
-                            message: chatPageProvider.messages[index],
-                          );
-                        },
-                      ),
-              ),
+              child: chatPageProvider.isLoading
+                  ? Center(child: const CircularProgressIndicator())
+                  : chatPageProvider.messages.isEmpty
+                  ? const Text(
+                      'Be first to say Hi!',
+                      style: TextStyle(color: Colors.white),
+                    )
+                  : ListView.builder(
+                      controller: scrollController,
+                      padding: const EdgeInsets.all(16),
+                      itemCount: chatPageProvider.messages.length,
+                      itemBuilder: (context, index) {
+                        final message = chatPageProvider.messages[index];
+                        final sender = chat.members
+                            .where((m) => m.uid == message.senderId)
+                            .first;
+
+                        final isOwn = message.senderId == auth.chatUser.uid;
+
+                        return MessagesListTile(
+                          message: chatPageProvider.messages[index],
+                          isOwn: isOwn,
+                          sender: sender,
+                        );
+                      },
+                    ),
             ),
-            // Поле ввода (всегда внизу)
+
             Container(
               padding: const EdgeInsets.all(8),
               color: const Color(0xFF1A1A1A),
@@ -119,19 +128,6 @@ class ChatPageView extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class MessagesListTile extends StatelessWidget {
-  final ChatMessage message;
-  const MessagesListTile({super.key, required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Text(message.content, style: const TextStyle(color: Colors.white)),
     );
   }
 }
