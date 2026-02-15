@@ -8,7 +8,6 @@ class SearchInput extends StatelessWidget {
     final controller = TextEditingController(text: "");
 
     return Container(
-      width: MediaQuery.of(context).size.width * 0.9,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         color: const Color(0xFF2A2A2A),
@@ -27,7 +26,7 @@ class SearchInput extends StatelessWidget {
           contentPadding: const EdgeInsets.all(8),
         ),
         onChanged: (value) {
-          print('(**) => onChanged:  ${value}');
+          print('(**) => onChange:  ${value}');
         },
       ),
     );

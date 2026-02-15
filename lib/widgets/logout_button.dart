@@ -9,11 +9,14 @@ class LogoutButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
 
-    return IconButton(
-      onPressed: () {
+    return GestureDetector(
+      onTap: () {
         auth.logOut();
       },
-      icon: Icon(Icons.logout_outlined, color: Colors.white38),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        child: Icon(Icons.logout_outlined, color: Colors.white38),
+      ),
     );
   }
 }

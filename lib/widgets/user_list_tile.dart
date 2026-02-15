@@ -49,25 +49,10 @@ class UserListTile extends StatelessWidget {
             fontSize: 18,
           ),
         ),
-        subtitle: user.wasRecentlyActive()
-            ? Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SpinKitThreeBounce(
-                    color: Colors.white70,
-                    size: height * 0.01,
-                  ),
-                ],
-              )
-            : Text(
-                lastActiveDate,
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+        subtitle: Text(
+          lastActiveDate,
+          style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w500),
+        ),
       ),
     );
   }

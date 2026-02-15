@@ -5,9 +5,12 @@ class CreateChatButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () {},
-      icon: Icon(Icons.people_alt, color: Colors.white38),
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        child: Icon(Icons.people_alt, color: Colors.white38),
+      ),
     );
   }
 
