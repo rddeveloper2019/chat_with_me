@@ -8,7 +8,7 @@ class ChatUser {
   final String name;
   final String email;
   final String imageUrl;
-  final DateTime lastActiveDate;
+  final Timestamp lastActiveDate;
 
   ChatUser({
     required this.uid,
@@ -24,27 +24,40 @@ class ChatUser {
       'name': name,
       'email': email,
       'image': imageUrl,
-      'last_active': lastActiveDate.millisecondsSinceEpoch,
+      'last_active': lastActiveDate, // Firestore принимает Timestamp напрямую
     };
   }
 
   String lastDayActive() {
-    return "${lastActiveDate.day}.${lastActiveDate.month}${lastActiveDate.year}";
+    final dateTime = lastActiveDate.toDate();
+    return "${dateTime.day.toString().padLeft(2, '0')}.${dateTime.month.toString().padLeft(2, '0')}.${dateTime.year}";
   }
 
   bool wasRecentlyActive() {
-    return DateTime.now().difference(lastActiveDate).inHours < 2;
+    final now = DateTime.now();
+    final activeDateTime = lastActiveDate.toDate();
+    return now.difference(activeDateTime).inHours < 1;
   }
 
   factory ChatUser.fromMap(Map<String, dynamic> map) {
+    final lastActiveRaw = map['last_active'];
+
+    Timestamp parseLastActive(dynamic value) {
+      if (value == null) return Timestamp.now();
+      if (value is Timestamp) return value;
+      if (value is int) return Timestamp.fromMillisecondsSinceEpoch(value);
+      if (value is double)
+        return Timestamp.fromMillisecondsSinceEpoch(value.toInt());
+      if (value is DateTime) return Timestamp.fromDate(value);
+      return Timestamp.now(); // fallback
+    }
+
     return ChatUser(
       uid: map['uid'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
       imageUrl: map['image'] ?? '',
-      lastActiveDate: (map['last_active'] is Timestamp)
-          ? (map['last_active'] as Timestamp).toDate()
-          : DateTime.fromMillisecondsSinceEpoch(map['last_active'] as int),
+      lastActiveDate: parseLastActive(lastActiveRaw),
     );
   }
 

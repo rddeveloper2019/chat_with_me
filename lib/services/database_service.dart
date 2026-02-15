@@ -1,4 +1,3 @@
-import 'package:chat_with_me/models/chat.dart';
 import 'package:chat_with_me/models/chat_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -130,5 +129,15 @@ class DatabaseService {
     } catch (e) {
       debugPrint('updateChatData error :  ${e.toString()}');
     }
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getUsers(String? name) {
+    return name != null
+        ? _db
+              .collection(USERS_COLLECTION)
+              .where('name', isGreaterThanOrEqualTo: name)
+              .where('name', isLessThanOrEqualTo: '${name}z')
+              .get()
+        : _db.collection(USERS_COLLECTION).get();
   }
 }

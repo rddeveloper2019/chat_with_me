@@ -50,7 +50,7 @@ class ChatsPageProvider extends ChangeNotifier {
 
             return Chat(
               uid: document.id,
-              currentUserUid: auth.chatUser?.uid ?? " " ?? "",
+              currentUserUid: auth.chatUser?.uid ?? "",
               isActivity: chatData['is_activity'] as bool,
               isGroup: chatData['is_group'] as bool,
               messages: messages,
