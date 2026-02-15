@@ -20,7 +20,7 @@ class UsersList extends StatelessWidget {
               .watch<UsersPageProvider>()
               .selectedUsers
               .contains(user);
-          print('(**) => isSelected:  ${isSelected}');
+
           return UserListTile(
             user: user,
             isSelected: isSelected,

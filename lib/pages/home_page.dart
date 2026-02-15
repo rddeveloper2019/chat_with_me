@@ -1,4 +1,5 @@
 import 'package:chat_with_me/pages/chats_page.dart';
+import 'package:chat_with_me/widgets/create_chat_button.dart';
 import 'package:chat_with_me/widgets/logout_button.dart';
 import 'package:chat_with_me/pages/users_page.dart';
 import 'package:chat_with_me/widgets/search_input.dart';
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage> {
         // title: Text('Users', style: TextStyle(fontWeight: FontWeight.bold)),
         title: SearchInput(),
         centerTitle: false,
-        actions: [LogoutButton()],
+        actions: [CreateChatButton(), LogoutButton()],
       ),
     ),
   ];

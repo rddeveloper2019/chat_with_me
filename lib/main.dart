@@ -3,7 +3,9 @@ import 'package:chat_with_me/pages/login_page.dart';
 import 'package:chat_with_me/pages/register_page.dart';
 import 'package:chat_with_me/pages/splash_page.dart';
 import 'package:chat_with_me/providers/auth_provider.dart';
+import 'package:chat_with_me/providers/chat_page_provider.dart';
 import 'package:chat_with_me/providers/chats_page_provider.dart';
+import 'package:chat_with_me/providers/users_page_provider.dart';
 import 'package:chat_with_me/services/cloud_storage_service.dart';
 import 'package:chat_with_me/services/database_service.dart';
 import 'package:chat_with_me/services/media_service.dart';
@@ -50,6 +52,10 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider<ChatsPageProvider>(
           create: (context) =>
               ChatsPageProvider(auth: context.read<AuthProvider>()),
+        ),
+        ChangeNotifierProvider<UsersPageProvider>(
+          create: (context) =>
+              UsersPageProvider(auth: context.read<AuthProvider>()),
         ),
       ],
       child: MaterialApp(

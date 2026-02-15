@@ -140,4 +140,14 @@ class DatabaseService {
               .get()
         : _db.collection(USERS_COLLECTION).get();
   }
+
+  Future<DocumentReference<Map<String, dynamic>>?> createChat(
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      return await _db.collection(CHATS_COLLECTION).add(data);
+    } catch (e) {
+      debugPrint('createChat error :  ${e.toString()}');
+    }
+  }
 }
