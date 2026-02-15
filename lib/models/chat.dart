@@ -34,9 +34,7 @@ class Chat {
   }
 
   String get imageUrl {
-    return !isGroup &&
-            _recipients.isNotEmpty &&
-            _recipients.first.imageUrl != null
+    return !isGroup && _recipients.isNotEmpty
         ? _recipients.first.imageUrl
         : "https://img.freepik.com/premium-vector/colorful-chat-logo-template-creative-chat-logo-design-vector_639795-2774.jpg";
   }

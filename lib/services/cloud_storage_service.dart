@@ -9,8 +9,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as path;
 
-const USERS_COLLECTION = 'users';
-const CHATS_COLLECTION = 'chats';
+const usersCollection = 'users';
+const chatsCollection = 'chats';
 
 Future<File?> compressImage(String path) async {
   final imageFile = File(path);
@@ -72,7 +72,7 @@ class CloudStorageService {
           '${uid}_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
 
       Reference reference = _storage.ref().child(
-        'images/$USERS_COLLECTION/$uid/$fileName',
+        'images/$usersCollection/$uid/$fileName',
       );
 
       UploadTask uploadTask = reference.putData(

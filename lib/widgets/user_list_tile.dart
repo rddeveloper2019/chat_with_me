@@ -1,7 +1,6 @@
 import 'package:chat_with_me/models/chat_user.dart';
 import 'package:chat_with_me/widgets/circle_avatar_with_status.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class UserListTile extends StatelessWidget {
