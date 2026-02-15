@@ -43,6 +43,16 @@ class UsersPageProvider extends ChangeNotifier {
     }
   }
 
+  void updatesSelectedUsers(ChatUser user) {
+    if (_selectedUsers.contains(user)) {
+      _selectedUsers.remove(user);
+    } else {
+      _selectedUsers.add(user);
+    }
+
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     super.dispose();

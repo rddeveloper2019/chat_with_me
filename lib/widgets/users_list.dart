@@ -15,7 +15,19 @@ class UsersList extends StatelessWidget {
       child: ListView.builder(
         itemCount: users.length,
         itemBuilder: (BuildContext context, int index) {
-          return UserListTile(user: users[index], isSelected: false);
+          final user = users[index];
+          final isSelected = context
+              .watch<UsersPageProvider>()
+              .selectedUsers
+              .contains(user);
+          print('(**) => isSelected:  ${isSelected}');
+          return UserListTile(
+            user: user,
+            isSelected: isSelected,
+            onTap: () {
+              context.read<UsersPageProvider>().updatesSelectedUsers(user);
+            },
+          );
         },
       ),
     );

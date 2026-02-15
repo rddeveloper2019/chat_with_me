@@ -24,37 +24,51 @@ class UserListTile extends StatelessWidget {
       locale: 'ru',
     );
 
-    return ListTile(
-      minVerticalPadding: height * 0.02,
-      onTap: () {},
-      leading: CircleAvatarWithStatus(
-        isActive: user.wasRecentlyActive(),
-        imageUrl: user.imageUrl,
-      ),
-      title: Text(
-        user.name,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w500,
-          fontSize: 18,
-        ),
-      ),
-      subtitle: user.wasRecentlyActive()
-          ? Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SpinKitThreeBounce(color: Colors.white70, size: height * 0.01),
-              ],
+    return Container(
+      margin: EdgeInsets.only(bottom: 8),
+      decoration: isSelected
+          ? BoxDecoration(
+              border: BoxBorder.all(color: Colors.blue),
+              borderRadius: BorderRadius.circular(20),
             )
-          : Text(
-              lastActiveDate,
-              style: TextStyle(
-                color: Colors.white70,
-                fontWeight: FontWeight.w500,
+          : null,
+      child: ListTile(
+        minVerticalPadding: height * 0.02,
+        onTap: onTap,
+        selected: isSelected,
+        selectedColor: Colors.blue,
+        leading: CircleAvatarWithStatus(
+          isActive: user.wasRecentlyActive(),
+          imageUrl: user.imageUrl,
+        ),
+        title: Text(
+          user.name,
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+            fontSize: 18,
+          ),
+        ),
+        subtitle: user.wasRecentlyActive()
+            ? Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SpinKitThreeBounce(
+                    color: Colors.white70,
+                    size: height * 0.01,
+                  ),
+                ],
+              )
+            : Text(
+                lastActiveDate,
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
+      ),
     );
   }
 }
