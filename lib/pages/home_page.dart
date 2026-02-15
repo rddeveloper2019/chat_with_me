@@ -1,6 +1,7 @@
 import 'package:chat_with_me/pages/chats_page.dart';
 import 'package:chat_with_me/widgets/logout_button.dart';
-import 'package:chat_with_me/widgets/users_page.dart';
+import 'package:chat_with_me/pages/users_page.dart';
+import 'package:chat_with_me/widgets/search_input.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,44 +14,57 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currentTabIdx = 0;
 
-  List<({String title, Widget widget})> tabs = [
-    (title: 'Chats', widget: ChatsPage()),
-    (title: 'Users', widget: UsersPage()),
+  List<({Widget body, AppBar appBar})> widgets = [
+    (
+      body: ChatsPage(),
+      appBar: AppBar(
+        title: Text('Chats', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: false,
+        actions: [LogoutButton()],
+      ),
+    ),
+    (
+      body: UsersPage(),
+      appBar: AppBar(
+        // title: Text('Users', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: SearchInput(),
+        centerTitle: false,
+        actions: [LogoutButton()],
+      ),
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          tabs[currentTabIdx].title,
-          style: TextStyle(fontWeight: FontWeight.bold),
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: widgets[currentTabIdx].appBar,
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: currentTabIdx,
+          onTap: (value) {
+            setState(() {
+              currentTabIdx = value;
+            });
+          },
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white38,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat_bubble_sharp),
+              label: 'Chats',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.supervised_user_circle_sharp),
+              label: 'Users',
+            ),
+          ],
         ),
-        centerTitle: false,
-        actions: [LogoutButton()],
+        body: widgets[currentTabIdx].body,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentTabIdx,
-        onTap: (value) {
-          setState(() {
-            currentTabIdx = value;
-          });
-        },
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white38,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_sharp),
-            label: 'Chats',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.supervised_user_circle_sharp),
-            label: 'Users',
-          ),
-        ],
-      ),
-      body: tabs[currentTabIdx]
-          .widget, //SingleChildScrollView(child: Column(children: [Text('Home Page')])),
     );
   }
 }

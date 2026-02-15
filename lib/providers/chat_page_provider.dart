@@ -101,6 +101,7 @@ class ChatPageProvider extends ChangeNotifier {
     } catch (e) {
       _hasError = true;
       _errorMessage = e.toString();
+      db.updateChatData(chatId, data: {'is_activity': false});
       debugPrint('❌ Ошибка загрузки сообщений: $e');
     } finally {
       _isLoading = false;
@@ -122,7 +123,7 @@ class ChatPageProvider extends ChangeNotifier {
       db.addMessageToChat(
         chatId,
         message: ChatMessage(
-          senderId: auth.chatUser.uid,
+          senderId: auth.chatUser?.uid ?? "",
           type: MessageType.text,
           content: message!,
           sentTime: Timestamp.now(),
@@ -145,14 +146,14 @@ class ChatPageProvider extends ChangeNotifier {
       }
 
       final imageUrl = await storageService.saveChatImageToStorage(
-        uid: auth.chatUser.uid,
+        uid: auth.chatUser?.uid ?? " ",
         file: image,
       );
 
       db.addMessageToChat(
         chatId,
         message: ChatMessage(
-          senderId: auth.chatUser.uid,
+          senderId: auth.chatUser?.uid ?? " ",
           type: MessageType.image,
           content: imageUrl ?? '',
           sentTime: Timestamp.fromDate(DateTime.now()),

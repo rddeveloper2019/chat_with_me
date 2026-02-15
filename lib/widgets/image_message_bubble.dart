@@ -21,7 +21,7 @@ class ImageMessageBubble extends StatelessWidget {
     final List<Color> colors = isOwn
         ? [Color.fromRGBO(0, 136, 249, 1), Color.fromRGBO(0, 82, 218, 1)]
         : [Color.fromRGBO(51, 49, 68, 1), Color.fromRGBO(51, 59, 68, 1)];
-    print('(**) => messageId:  ${messageId}');
+
     final DecorationImage image = DecorationImage(
       image: NetworkImage(imageUrl),
       fit: BoxFit.cover,

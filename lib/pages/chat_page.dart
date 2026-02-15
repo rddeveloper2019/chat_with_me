@@ -59,62 +59,68 @@ class ChatPageView extends StatelessWidget {
     final chatPageProvider = context.watch<ChatPageProvider>();
     final auth = Provider.of<AuthProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            CircleAvatar(backgroundImage: NetworkImage(chat.imageUrl)),
-            const SizedBox(width: 10),
-            Text(chat.title),
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            children: [
+              CircleAvatar(backgroundImage: NetworkImage(chat.imageUrl)),
+              const SizedBox(width: 10),
+              Text(chat.title),
+            ],
+          ),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.delete, color: Colors.white38),
+            ),
           ],
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.delete, color: Colors.white38),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: chatPageProvider.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : chatPageProvider.messages.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'Be first to say Hi!',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )
+                    : ListView.builder(
+                        controller: scrollController,
+                        reverse: true,
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: 16,
+                        ),
+                        itemCount: chatPageProvider.messages.length,
+                        itemBuilder: (context, index) {
+                          final message = chatPageProvider.messages[index];
+                          final sender = chat.members
+                              .where((m) => m.uid == message.senderId)
+                              .first;
+                          final isOwn = message.senderId == auth.chatUser?.uid;
+
+                          return MessagesListTile(
+                            message: message,
+                            isOwn: isOwn,
+                            sender: sender,
+                          );
+                        },
+                      ),
+              ),
+
+              ChatInput(),
+            ],
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: chatPageProvider.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : chatPageProvider.messages.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'Be first to say Hi!',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )
-                  : ListView.builder(
-                      controller: scrollController,
-                      reverse: true,
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 16,
-                      ),
-                      itemCount: chatPageProvider.messages.length,
-                      itemBuilder: (context, index) {
-                        final message = chatPageProvider.messages[index];
-                        final sender = chat.members
-                            .where((m) => m.uid == message.senderId)
-                            .first;
-                        final isOwn = message.senderId == auth.chatUser.uid;
-
-                        return MessagesListTile(
-                          message: message,
-                          isOwn: isOwn,
-                          sender: sender,
-                        );
-                      },
-                    ),
-            ),
-
-            ChatInput(),
-          ],
         ),
       ),
     );

@@ -73,10 +73,12 @@ class MainApp extends StatelessWidget {
         },
         navigatorKey: GetIt.I<NavigationService>().navigatorKey,
         home: Builder(
-          builder: (context) {
+          builder: (ctx) {
+            final auth = Provider.of<AuthProvider>(ctx);
+            print(auth);
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Future.delayed(const Duration(milliseconds: 2200), () {
-                if (context.mounted) {
+                if (context.mounted && auth.chatUser == null) {
                   GetIt.I<NavigationService>().removeAndNavigateToRoute(
                     '/login',
                   );

@@ -9,7 +9,7 @@ class AuthProvider extends ChangeNotifier {
   late FirebaseAuth _auth;
   late NavigationService _navigationService;
   late DatabaseService _databaseService;
-  late ChatUser chatUser;
+  ChatUser? chatUser;
   AuthProvider() {
     _auth = FirebaseAuth.instance;
     _navigationService = GetIt.I<NavigationService>();

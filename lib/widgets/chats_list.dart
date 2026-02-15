@@ -14,7 +14,7 @@ class ChatsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chats = Provider.of<ChatsPageProvider>(context).chats ?? [];
+    final chats = context.watch<ChatsPageProvider>().chats ?? [];
     final auth = Provider.of<AuthProvider>(context);
     final navigationService = GetIt.I<NavigationService>();
     final width = MediaQuery.of(context).size.width;
@@ -39,9 +39,9 @@ class ChatsList extends StatelessWidget {
             title: chat.title,
             subtitle: chat.messages.first.type != MessageType.text
                 ? 'Media Attachment'
-                : chat.messages.first.content,
+                : chat.messages.last.content,
             isActive: chats[index].members.any(
-              (m) => m.wasRecentlyActive() && auth.chatUser.uid != m.uid,
+              (m) => m.wasRecentlyActive() && auth.chatUser?.uid != m.uid,
             ),
             isActivity: chat.isActivity,
             imageUrl: chat.imageUrl,
