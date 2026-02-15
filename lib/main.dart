@@ -3,7 +3,6 @@ import 'package:chat_with_me/pages/login_page.dart';
 import 'package:chat_with_me/pages/register_page.dart';
 import 'package:chat_with_me/pages/splash_page.dart';
 import 'package:chat_with_me/providers/auth_provider.dart';
-import 'package:chat_with_me/providers/chat_page_provider.dart';
 import 'package:chat_with_me/providers/chats_page_provider.dart';
 import 'package:chat_with_me/providers/users_page_provider.dart';
 import 'package:chat_with_me/services/cloud_storage_service.dart';

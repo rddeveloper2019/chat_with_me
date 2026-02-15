@@ -25,7 +25,7 @@ class UsersList extends StatelessWidget {
             user: user,
             isSelected: isSelected,
             onTap: () {
-              context.read<UsersPageProvider>().updatesSelectedUsers(user);
+              context.read<UsersPageProvider>().updateSelectedUsers(user);
             },
           );
         },

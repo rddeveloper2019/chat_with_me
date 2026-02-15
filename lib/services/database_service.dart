@@ -86,9 +86,36 @@ class DatabaseService {
 
   Future<void> deleteChat(String chatId) async {
     try {
-      await _db.collection(CHATS_COLLECTION).doc(chatId).delete();
+      final chatRef = _db.collection(CHATS_COLLECTION).doc(chatId);
+      final chatDoc = await chatRef.get();
+
+      if (!chatDoc.exists) return;
+
+      final chatData = chatDoc.data()!;
+      final members = List<String>.from(chatData['members'] ?? []);
+
+      final messagesRef = chatRef.collection('messages');
+      final messagesSnapshot = await messagesRef.get();
+
+      if (messagesSnapshot.docs.isNotEmpty) {
+        final batch = _db.batch();
+        for (var doc in messagesSnapshot.docs) {
+          batch.delete(doc.reference);
+        }
+        await batch.commit();
+      }
+
+      for (var uid in members) {
+        await _db.collection(USERS_COLLECTION).doc(uid).update({
+          'chats': FieldValue.arrayRemove([chatId]),
+        });
+      }
+
+      await chatRef.delete();
+
+      debugPrint('✅ Chat $chatId deleted completely');
     } catch (e) {
-      debugPrint('deleteChat error :  ${e.toString()}');
+      debugPrint('❌ deleteChat error: ${e.toString()}');
     }
   }
 

@@ -1,4 +1,6 @@
+import 'package:chat_with_me/providers/users_page_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SearchInput extends StatelessWidget {
   const SearchInput({super.key});
@@ -25,8 +27,8 @@ class SearchInput extends StatelessWidget {
           border: InputBorder.none,
           contentPadding: const EdgeInsets.all(8),
         ),
-        onChanged: (value) {
-          print('(**) => onChange:  ${value}');
+        onSubmitted: (value) {
+          context.read<UsersPageProvider>().getUsers(value);
         },
       ),
     );

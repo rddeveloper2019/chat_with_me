@@ -84,20 +84,21 @@ class ChatPageProvider extends ChangeNotifier {
       final snapshot = await db.getAllChatMessages(chatId);
 
       if (snapshot.docs.isEmpty) {
+        messages.clear();
         debugPrint('ℹ️ Чат $chatId пустой (нет сообщений)');
+      } else {
+        messages = snapshot.docs
+            .map((doc) => ChatMessage.fromMap(doc.data()))
+            .toList();
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (messagesViewScrollController.hasClients) {
+            messagesViewScrollController.jumpTo(
+              messagesViewScrollController.position.maxScrollExtent,
+            );
+          }
+        });
       }
-
-      messages = snapshot.docs
-          .map((doc) => ChatMessage.fromMap(doc.data()))
-          .toList();
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (messagesViewScrollController.hasClients) {
-          messagesViewScrollController.jumpTo(
-            messagesViewScrollController.position.maxScrollExtent,
-          );
-        }
-      });
     } catch (e) {
       _hasError = true;
       _errorMessage = e.toString();
@@ -113,9 +114,9 @@ class ChatPageProvider extends ChangeNotifier {
 
   void goBack() => navigationService.goBack();
 
-  void deleteChat() {
+  Future<void> deleteChat() async {
+    await db.deleteChat(chatId);
     goBack();
-    db.deleteChat(chatId);
   }
 
   void sendText() async {

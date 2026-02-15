@@ -37,7 +37,9 @@ class ChatsList extends StatelessWidget {
               navigationService.navigateToPage(ChatPage(chat: chat));
             },
             title: chat.title,
-            subtitle: chat.messages.first.type != MessageType.text
+            subtitle: chat.messages.isEmpty
+                ? ''
+                : chat.messages.first.type != MessageType.text
                 ? 'Media Attachment'
                 : chat.messages.last.content,
             isActive: chats[index].members.any(

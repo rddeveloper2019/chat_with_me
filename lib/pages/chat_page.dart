@@ -75,7 +75,9 @@ class ChatPageView extends StatelessWidget {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                context.read<ChatPageProvider>().deleteChat();
+              },
               icon: const Icon(Icons.delete, color: Colors.white38),
             ),
           ],
