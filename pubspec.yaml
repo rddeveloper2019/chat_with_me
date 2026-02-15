@@ -47,6 +47,7 @@ dependencies:
   image: any
   path_provider: any
   mime: ^2.0.0
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
