@@ -91,64 +91,49 @@ class ChatPageView extends StatelessWidget {
         ),
 
         body: SafeArea(
-          child: CustomScrollView(
-            controller: scrollController,
+          child: Column(
+            children: [
+              Expanded(
+                child: CustomScrollView(
+                  controller: scrollController,
+                  slivers: [
+                    if (chatPageProvider.isLoading)
+                      const SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    else if (chatPageProvider.messages.isEmpty)
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Center(
+                          child: Text(
+                            'Be first to say Hi!',
+                            style: TextStyle(color: Colors.grey[400]),
+                          ),
+                        ),
+                      )
+                    else
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final message = chatPageProvider.messages.reversed
+                              .toList()[index];
+                          final sender = chat.members.firstWhere(
+                            (m) => m.uid == message.senderId,
+                          );
+                          final isOwn = message.senderId == auth.chatUser?.uid;
 
-            slivers: [
-              if (chatPageProvider.isLoading)
-                const SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else if (chatPageProvider.messages.isEmpty)
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: Text(
-                      'Be first to say Hi!',
-                      style: TextStyle(color: Colors.grey[400]),
-                    ),
-                  ),
-                )
-              else
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final messages = chatPageProvider.messages.reversed
-                          .toList();
-                      final message = messages[index];
-
-                      final sender = chat.members.firstWhere(
-                        (m) => m.uid == message.senderId,
-                      );
-                      final isOwn = message.senderId == auth.chatUser?.uid;
-
-                      return MessagesListTile(
-                        message: message,
-                        isOwn: isOwn,
-                        sender: sender,
-                      );
-                    },
-                    childCount: chatPageProvider.messages.length,
-
-                    findChildIndexCallback: (Key key) {
-                      return null;
-                    },
-                  ),
-                ),
-
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ChatInput(),
+                          return MessagesListTile(
+                            message: message,
+                            isOwn: isOwn,
+                            sender: sender,
+                          );
+                        }, childCount: chatPageProvider.messages.length),
+                      ),
+                  ],
                 ),
               ),
 
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: MediaQuery.of(context).viewInsets.bottom,
-                ),
-              ),
+              Padding(padding: const EdgeInsets.all(8.0), child: ChatInput()),
             ],
           ),
         ),
