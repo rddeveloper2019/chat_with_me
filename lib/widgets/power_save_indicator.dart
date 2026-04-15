@@ -20,7 +20,10 @@ class _PowerSaveIndicatorState extends State<PowerSaveIndicator> {
   }
 
   Future<void> _checkPowerSave() async {
+    final version = await _nativeService.getPlatformVersion();
+    debugPrint('📱 Platform version: $version');
     final isOn = await _nativeService.isPowerSaveMode();
+    print('(**) => isOn:  ${isOn}');
     if (mounted) {
       setState(() => _isPowerSave = isOn);
     }

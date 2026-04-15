@@ -4,17 +4,27 @@ import AudioToolbox
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
+    
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        let controller = window?.rootViewController as! FlutterViewController
+        // 1. Сначала регистрируем плагины — это обязательно!
+        GeneratedPluginRegistrant.register(with: self)
+        
+        // 2. Безопасно получаем контроллер
+        guard let controller = window?.rootViewController as? FlutterViewController else {
+            // Если контроллер ещё не готов — выходим, метод зарегистрируется позже
+            return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+        }
+        
+        // 3. Регистрируем MethodChannel
         let channel = FlutterMethodChannel(
             name: "com.example.chat_with_me/native",
             binaryMessenger: controller.binaryMessenger
         )
         
-        channel.setMethodCallHandler { call, result in
+        channel.setMethodCallHandler { [weak self] call, result in
             switch call.method {
             case "isPowerSaveMode":
                 let isLowPower = ProcessInfo.processInfo.isLowPowerModeEnabled
@@ -27,14 +37,13 @@ import AudioToolbox
                 
             case "getPlatformVersion":
                 let systemVersion = UIDevice.current.systemVersion
-                result("iOS \(systemVersion)")  // ✅ Исправленная интерполяция
+                result("iOS \(systemVersion)")
                 
             default:
                 result(FlutterMethodNotImplemented)
             }
         }
         
-        GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 }
