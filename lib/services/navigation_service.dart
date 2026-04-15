@@ -1,3 +1,4 @@
+import 'package:chat_with_me/widgets/app_page.dart';
 import 'package:flutter/material.dart';
 
 class NavigationService {
@@ -15,9 +16,7 @@ class NavigationService {
   }
 
   void navigateToPage(Widget page) {
-    navigatorKey.currentState?.push(
-      MaterialPageRoute(builder: (context) => page),
-    );
+    navigatorKey.currentState?.push(AppPage(page: page));
   }
 
   void goBack() {

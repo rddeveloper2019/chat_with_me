@@ -42,6 +42,12 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
 }
 
 class ChatPageView extends StatelessWidget {
@@ -61,66 +67,88 @@ class ChatPageView extends StatelessWidget {
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
           title: Row(
             children: [
-              CircleAvatar(backgroundImage: NetworkImage(chat.imageUrl)),
+              Hero(
+                tag: chat.uid,
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(chat.imageUrl),
+                ),
+              ),
               const SizedBox(width: 10),
               Text(chat.title),
             ],
           ),
           actions: [
             IconButton(
-              onPressed: () {
-                context.read<ChatPageProvider>().deleteChat();
-              },
+              onPressed: () => context.read<ChatPageProvider>().deleteChat(),
               icon: const Icon(Icons.delete, color: Colors.white38),
             ),
           ],
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: chatPageProvider.isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : chatPageProvider.messages.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'Be first to say Hi!',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
-                    : ListView.builder(
-                        controller: scrollController,
-                        reverse: true,
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          bottom: 16,
-                        ),
-                        itemCount: chatPageProvider.messages.length,
-                        itemBuilder: (context, index) {
-                          final message = chatPageProvider.messages[index];
-                          final sender = chat.members
-                              .where((m) => m.uid == message.senderId)
-                              .first;
-                          final isOwn = message.senderId == auth.chatUser?.uid;
 
-                          return MessagesListTile(
-                            message: message,
-                            isOwn: isOwn,
-                            sender: sender,
-                          );
-                        },
-                      ),
+        body: SafeArea(
+          child: CustomScrollView(
+            controller: scrollController,
+
+            slivers: [
+              if (chatPageProvider.isLoading)
+                const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (chatPageProvider.messages.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Text(
+                      'Be first to say Hi!',
+                      style: TextStyle(color: Colors.grey[400]),
+                    ),
+                  ),
+                )
+              else
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final messages = chatPageProvider.messages.reversed
+                          .toList();
+                      final message = messages[index];
+
+                      final sender = chat.members.firstWhere(
+                        (m) => m.uid == message.senderId,
+                      );
+                      final isOwn = message.senderId == auth.chatUser?.uid;
+
+                      return MessagesListTile(
+                        message: message,
+                        isOwn: isOwn,
+                        sender: sender,
+                      );
+                    },
+                    childCount: chatPageProvider.messages.length,
+
+                    findChildIndexCallback: (Key key) {
+                      return null;
+                    },
+                  ),
+                ),
+
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ChatInput(),
+                ),
               ),
 
-              ChatInput(),
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: MediaQuery.of(context).viewInsets.bottom,
+                ),
+              ),
             ],
           ),
         ),

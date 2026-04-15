@@ -2,6 +2,7 @@ import 'package:chat_with_me/pages/chats_page.dart';
 import 'package:chat_with_me/widgets/create_chat_button.dart';
 import 'package:chat_with_me/widgets/logout_button.dart';
 import 'package:chat_with_me/pages/users_page.dart';
+import 'package:chat_with_me/widgets/power_save_indicator.dart';
 import 'package:chat_with_me/widgets/search_input.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('Chats', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: false,
-        actions: [LogoutButton()],
+        actions: [LogoutButton(), PowerSaveIndicator()],
       ),
     ),
     (
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> {
         // title: Text('Users', style: TextStyle(fontWeight: FontWeight.bold)),
         title: SearchInput(),
         centerTitle: false,
-        actions: [CreateChatButton(), LogoutButton()],
+        actions: [CreateChatButton(), LogoutButton(), PowerSaveIndicator()],
       ),
     ),
   ];
