@@ -8,6 +8,7 @@ import 'package:chat_with_me/providers/users_page_provider.dart';
 import 'package:chat_with_me/services/cloud_storage_service.dart';
 import 'package:chat_with_me/services/database_service.dart';
 import 'package:chat_with_me/services/media_service.dart';
+import 'package:chat_with_me/services/native_service.dart';
 import 'package:chat_with_me/services/navigation_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,6 +39,7 @@ void _registerServices() {
   GetIt.I.registerSingleton<KeyboardVisibilityController>(
     KeyboardVisibilityController(),
   );
+  GetIt.I.registerSingleton<NativeService>(NativeService());
 }
 
 class MainApp extends StatelessWidget {
