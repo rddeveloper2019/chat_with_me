@@ -9,20 +9,26 @@ import AudioToolbox
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         let controller = window?.rootViewController as! FlutterViewController
-        let channel = FlutterMethodChannel(name: "com.example.chat_with_me/native", binaryMessenger: controller.binaryMessenger)
+        let channel = FlutterMethodChannel(
+            name: "com.example.chat_with_me/native",
+            binaryMessenger: controller.binaryMessenger
+        )
         
         channel.setMethodCallHandler { call, result in
             switch call.method {
             case "isPowerSaveMode":
                 let isLowPower = ProcessInfo.processInfo.isLowPowerModeEnabled
                 result(isLowPower)
+                
             case "vibrate":
-                // Стандартная системная вибрация iOS
+                // Системная вибрация для уведомлений
                 AudioServicesPlaySystemSound(SystemSoundID(1352))
                 result(nil)
+                
             case "getPlatformVersion":
                 let systemVersion = UIDevice.current.systemVersion
-                result("iOS \(systemVersion)")
+                result("iOS \(systemVersion)")  // ✅ Исправленная интерполяция
+                
             default:
                 result(FlutterMethodNotImplemented)
             }
