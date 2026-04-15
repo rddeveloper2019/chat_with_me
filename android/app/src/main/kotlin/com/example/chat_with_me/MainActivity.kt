@@ -14,7 +14,7 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        
+
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
                 "isPowerSaveMode" -> {
@@ -26,17 +26,17 @@ class MainActivity : FlutterActivity() {
                     }
                     result.success(isSaving)
                 }
-                
+
                 "vibrate" -> {
                     val duration = call.argument<Int>("duration") ?: 200
                     triggerVibration(duration)
                     result.success(null)
                 }
-                
+
                 "getPlatformVersion" -> {
                     result.success("Android ${Build.VERSION.RELEASE}")
                 }
-                
+
                 else -> {
                     result.notImplemented()
                 }
@@ -46,13 +46,13 @@ class MainActivity : FlutterActivity() {
 
     private fun triggerVibration(duration: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            // Android 12+ использует VibratorManager
+
             val vibratorManager = getSystemService(Context.VIBRATOR_SERVICE) as? VibratorManager
             vibratorManager?.defaultVibrator?.vibrate(
                 VibrationEffect.createOneShot(duration.toLong(), VibrationEffect.DEFAULT_AMPLITUDE)
             )
         } else {
-            // Android 11 и ниже
+
             @Suppress("DEPRECATION")
             val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
