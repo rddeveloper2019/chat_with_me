@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:image/image.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MediaService {
@@ -17,6 +18,16 @@ class MediaService {
       if (result != null && result.files.isNotEmpty) {
         PlatformFile platformFile = result.files.first;
 
+        if (platformFile.bytes != null && platformFile.bytes!.isNotEmpty) {
+          debugPrint(
+            'Создаем файл из байтов. Размер: ${platformFile.bytes!.length} байт',
+          );
+          return await _saveBytesToTempFile(
+            platformFile.bytes!,
+            platformFile.name,
+          );
+        }
+
         if (platformFile.path != null && platformFile.path!.isNotEmpty) {
           File file = File(platformFile.path!);
 
@@ -27,16 +38,6 @@ class MediaService {
           } else {
             debugPrint('Файл не существует по пути: ${platformFile.path}');
           }
-        }
-
-        if (platformFile.bytes != null && platformFile.bytes!.isNotEmpty) {
-          debugPrint(
-            'Создаем файл из байтов. Размер: ${platformFile.bytes!.length} байт',
-          );
-          return await _saveBytesToTempFile(
-            platformFile.bytes!,
-            platformFile.name,
-          );
         }
 
         debugPrint('Не удалось получить изображение: нет пути или байтов');
@@ -58,7 +59,9 @@ class MediaService {
       final String filePath = '${tempDir.path}/$uniqueName';
 
       final File tempFile = File(filePath);
-      await tempFile.writeAsBytes(bytes);
+      final compressedBytes = await _compressImage(bytes);
+      debugPrint('Сжато до: ${compressedBytes.length} байт');
+      await tempFile.writeAsBytes(compressedBytes);
 
       debugPrint('Создан временный файл: $filePath');
       return tempFile;
@@ -87,4 +90,13 @@ class MediaService {
       debugPrint('Ошибка очистки временных файлов: $e');
     }
   }
+}
+
+Future<Uint8List> _compressImage(Uint8List imageData) async {
+  return await compute(_compressImageIsolate, imageData);
+}
+
+Uint8List _compressImageIsolate(Uint8List data) {
+  final img = decodeImage(data);
+  return encodeJpg(img!, quality: 70);
 }
