@@ -36,6 +36,7 @@ class ChatsList extends StatelessWidget {
             onTap: () {
               navigationService.navigateToPage(ChatPage(chat: chat));
             },
+            uid: chat.uid,
             title: chat.title,
             subtitle: chat.messages.isEmpty
                 ? ''

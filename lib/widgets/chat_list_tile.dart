@@ -9,6 +9,7 @@ class ChatListTile extends StatelessWidget {
   final bool isActivity;
   final String imageUrl;
   final double height;
+  final String uid;
   final void Function()? onTap;
 
   const ChatListTile({
@@ -18,6 +19,7 @@ class ChatListTile extends StatelessWidget {
     required this.isActive,
     required this.isActivity,
     required this.imageUrl,
+    required this.uid,
     this.height = 40,
     this.onTap,
   });
@@ -27,7 +29,10 @@ class ChatListTile extends StatelessWidget {
     return ListTile(
       minVerticalPadding: height * 0.20,
       onTap: onTap,
-      leading: CircleAvatarWithStatus(isActive: isActive, imageUrl: imageUrl),
+      leading: Hero(
+        tag: uid,
+        child: CircleAvatarWithStatus(isActive: isActive, imageUrl: imageUrl),
+      ),
       title: Text(
         title,
         style: TextStyle(

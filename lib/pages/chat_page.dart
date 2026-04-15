@@ -68,7 +68,12 @@ class ChatPageView extends StatelessWidget {
         appBar: AppBar(
           title: Row(
             children: [
-              CircleAvatar(backgroundImage: NetworkImage(chat.imageUrl)),
+              Hero(
+                tag: chat.uid,
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(chat.imageUrl),
+                ),
+              ),
               const SizedBox(width: 10),
               Text(chat.title),
             ],
