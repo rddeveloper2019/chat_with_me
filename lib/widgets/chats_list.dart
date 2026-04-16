@@ -31,7 +31,6 @@ class ChatsList extends StatelessWidget {
         itemCount: chats.length,
         itemBuilder: (context, index) {
           final Chat chat = chats[index];
-
           return ChatListTile(
             onTap: () {
               navigationService.navigateToPage(ChatPage(chat: chat));
